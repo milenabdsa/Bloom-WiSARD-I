@@ -9,31 +9,14 @@ import multiprocessing
 from concurrent.futures import ProcessPoolExecutor, as_completed
 
 HYPERPARAMETER_SPACE = {
-    #'num_pc_filters': {'type': int, 'min': 3, 'max': 3},
-    #'num_lhr_filters': {'type': int, 'min': 3, 'max': 3},
-    #'num_ghr_filters': {'type': int, 'min': 3, 'max': 3},
-    #'num_ga_filters': {'type': int, 'min': 3, 'max': 3},
-    #'num_xor_filters': {'type': int, 'min': 3, 'max': 3},
-    'pc_lut_addr_size': {'type': int, 'min': 2, 'max': 32},
-    'lhr_lut_addr_size': {'type': int, 'min': 2, 'max': 32},
-    'ghr_lut_addr_size': {'type': int, 'min': 2, 'max': 32},
-    'ga_lut_addr_size': {'type': int, 'min': 2, 'max': 32},
-    'xor_lut_addr_size': {'type': int, 'min': 2, 'max': 32},
-    #'pc_bleaching_threshold': {'type': int, 'min': 200, 'max': 200},
-    #'lhr_bleaching_threshold': {'type': int, 'min': 200, 'max': 200},
-    #'ghr_bleaching_threshold': {'type': int, 'min': 200, 'max': 200},
-    #'ga_bleaching_threshold': {'type': int, 'min': 200, 'max': 200},
-    #'xor_bleaching_threshold': {'type': int, 'min': 200, 'max': 200},
-    'pc_tournament_weight': {'type': float, 'min': 0.0, 'max': 1.0, 'step': 0.02}, # Para pesos, pode usar 'step'
-    'lhr_tournament_weight': {'type': float, 'min': 0.0, 'max': 1.0, 'step': 0.02},
-    'xor_tournament_weight': {'type': float, 'min': 0.0, 'max': 1.0, 'step': 0.02},
-    'ga_tournament_weight': {'type': float, 'min': 0.0, 'max': 1.0, 'step': 0.02},
-    'ghr_tournament_weight': {'type': float, 'min': 0.0, 'max': 1.0, 'step': 0.02},
-    #'pc_num_hashes': {'type': int, 'min': 3, 'max': 3},
-    #'lhr_num_hashes': {'type': int, 'min': 3, 'max': 3},
-    #'ghr_num_hashes': {'type': int, 'min': 3, 'max': 3},
-    #'ga_num_hashes': {'type': int, 'min': 3, 'max': 3},
-    #'xor_num_hashes': {'type': int, 'min': 3, 'max': 3},
+    'pc_lut_addr_size': {'type': int, 'min': 2, 'max': 64},
+    'lhr_lut_addr_size': {'type': int, 'min': 2, 'max': 64},
+    'ghr_lut_addr_size': {'type': int, 'min': 2, 'max': 64},
+    'ga_lut_addr_size': {'type': int, 'min': 2, 'max': 64},
+    'xor_lut_addr_size': {'type': int, 'min': 2, 'max': 64},
+    'weight_adjustment_rate': {'type': int, 'min': 1, 'max': 100},
+    'min_weight': {'type': int, 'min': 1, 'max': 1000},
+    'max_weight': {'type': int, 'min': 10, 'max': 5000},
     'ghr_size': {'type': int, 'min': 1, 'max': 2000},
     'ga_branches': {'type': int, 'min': 1, 'max': 2000},
 }
@@ -57,14 +40,6 @@ def generate_individual() -> dict:
                 individual[param] = round(val / spec['step']) * spec['step']
             else:
                 individual[param] = val
-
-    total_weight = individual['pc_tournament_weight'] + individual['lhr_tournament_weight'] + individual['xor_tournament_weight'] + individual['ga_tournament_weight'] + individual['ghr_tournament_weight']
-    if total_weight > 0:
-        individual['pc_tournament_weight'] /= total_weight
-        individual['lhr_tournament_weight'] /= total_weight
-        individual['xor_tournament_weight'] /= total_weight
-        individual['ga_tournament_weight'] /= total_weight
-        individual['ghr_tournament_weight'] /= total_weight
     return individual
 
 def create_initial_population(size: int) -> List[dict]:
@@ -99,22 +74,6 @@ def crossover(parent1: dict, parent2: dict) -> Tuple[dict, dict]:
         for i in range(crossover_point):
             key = keys[i]
             child1[key], child2[key] = child2[key], child1[key]
-
-        if 'pc_tournament_weight' in child1:
-            total_weight1 = child1['pc_tournament_weight'] + child1['lhr_tournament_weight'] + child1['ga_tournament_weight'] + child1['xor_tournament_weight'] + child1['ghr_tournament_weight']
-            total_weight2 = child2['pc_tournament_weight'] + child2['lhr_tournament_weight'] + child2['ga_tournament_weight'] + child2['xor_tournament_weight'] + child2['ghr_tournament_weight']
-            if total_weight1 > 0:
-                child1['pc_tournament_weight'] /= total_weight1
-                child1['lhr_tournament_weight'] /= total_weight1
-                child1['ga_tournament_weight'] /= total_weight1
-                child1['xor_tournament_weight'] /= total_weight1
-                child1['ghr_tournament_weight'] /= total_weight1
-            if total_weight2 > 0:
-                child2['pc_tournament_weight'] /= total_weight2
-                child2['lhr_tournament_weight'] /= total_weight2
-                child2['ga_tournament_weight'] /= total_weight2
-                child2['xor_tournament_weight'] /= total_weight2
-                child2['ghr_tournament_weight'] /= total_weight2
     return child1, child2
 
 def mutate(individual: dict) -> dict:
@@ -129,15 +88,6 @@ def mutate(individual: dict) -> dict:
                     mutated_individual[param] = round(val / spec['step']) * spec['step']
                 else:
                     mutated_individual[param] = val
-
-    if 'pc_tournament_weight' in mutated_individual:
-        total_weight = mutated_individual['pc_tournament_weight'] + mutated_individual['lhr_tournament_weight'] + mutated_individual['ga_tournament_weight'] + mutated_individual['xor_tournament_weight'] + mutated_individual['ghr_tournament_weight']
-        if total_weight > 0:
-            mutated_individual['pc_tournament_weight'] /= total_weight
-            mutated_individual['lhr_tournament_weight'] /= total_weight
-            mutated_individual['ga_tournament_weight'] /= total_weight
-            mutated_individual['xor_tournament_weight'] /= total_weight
-            mutated_individual['ghr_tournament_weight'] /= total_weight
     return mutated_individual
 
 def genetic_algorithm(input_file: str):
@@ -230,5 +180,5 @@ if __name__ == '__main__':
     parser.add_argument("input_file", type=str)
     args = parser.parse_args()
 
-    sample_input_file = f"/home/almenara/bloom-wisard-branch-prediction/Dataset_pc_decimal/{args.input_file}.txt" 
+    sample_input_file = f"/Users/almenara/Downloads/mestrado/data-fusion/Bloom-WiSARD-I/Dataset_pc_decimal/{args.input_file}.txt" 
     best_params, final_best_fitness = genetic_algorithm(sample_input_file)

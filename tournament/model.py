@@ -5,33 +5,26 @@ from discriminator import Discriminator
 
 class Model:
     def __init__(self, input_params):
-        self.num_pc_filters = input_params[0]
-        self.num_lhr_filters = input_params[1]
-        self.num_ghr_filters = input_params[2]
-        self.num_ga_filters = input_params[3]
-        self.num_xor_filters = input_params[4]
-        self.pc_lut_addr_size = input_params[5]
-        self.lhr_lut_addr_size = input_params[6]
-        self.ghr_lut_addr_size = input_params[7]
-        self.ga_lut_addr_size = input_params[8]
-        self.xor_lut_addr_size = input_params[9]
-        self.pc_bleaching_threshold    = input_params[10]
-        self.lhr_bleaching_threshold = input_params[11]
-        self.ghr_bleaching_threshold = input_params[12]
-        self.ga_bleaching_threshold = input_params[13]
-        self.xor_bleaching_threshold = input_params[14]
-        self.pc_tournament_weight = input_params[15]
-        self.lhr_tournament_weight = input_params[16]
-        self.ga_tournament_weight   = input_params[17]
-        self.ghr_tournament_weight   = input_params[18]
-        self.xor_tournament_weight = input_params[19]
-        self.pc_num_hashes = input_params[20]
-        self.lhr_num_hashes = input_params[21]
-        self.ghr_num_hashes = input_params[22]
-        self.ga_num_hashes = input_params[23]
-        self.xor_num_hashes = input_params[24]
-        self.ghr_size = input_params[25]
-        self.ga_branches = input_params[26]
+        self.num_pc_filters = 1
+        self.num_lhr_filters = 1
+        self.num_ghr_filters = 1
+        self.num_ga_filters = 1
+        self.num_xor_filters = 1
+        self.pc_lut_addr_size = input_params[0]
+        self.lhr_lut_addr_size = input_params[1]
+        self.ghr_lut_addr_size = input_params[2]
+        self.ga_lut_addr_size = input_params[3]
+        self.xor_lut_addr_size = input_params[4]
+        self.pc_num_hashes = 3
+        self.lhr_num_hashes = 3
+        self.ghr_num_hashes = 3
+        self.ga_num_hashes = 3
+        self.xor_num_hashes = 3
+        self.ghr_size = input_params[5]
+        self.ga_branches = input_params[6]
+        self.weight_adjustment_rate = input_params[7]
+        self.min_weight = input_params[8]
+        self.max_weight = input_params[9]
         self.seed = 203
         
         self.dynamic_weights = {
@@ -42,9 +35,7 @@ class Model:
             'xor': 1.0
         }
         
-        self.weight_adjustment_rate = 0.1
-        self.min_weight = 0.01
-        self.max_weight = 10.0
+        
 
         self.pc_discriminators = [
             Discriminator(self.num_pc_filters, self.pc_lut_addr_size, self.pc_num_hashes)

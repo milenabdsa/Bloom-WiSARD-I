@@ -13,8 +13,20 @@ def test_with_dataset(dataset_path, num_branches=10000):
     print(f"=== Testando com dataset: {dataset_path} ===")
     
     parameters = [1, 1, 1, 1, 1, 4, 4, 4, 4, 4, 8000, 8000, 8000, 8000, 8000, 5.0, 2.0, 2.0, 2.0, 3.0, 3, 3, 3, 3, 3, 4, 4]
+
+    parameters = {
+        "M1": [22, 31, 58, 29, 63, 519, 32, 65, 696, 1169],
+        "M2": [ 26, 29, 16, 29, 20, 56, 231, 1, 1, 2000],
+        "I1": [],
+        "I2": [],
+    }
     
-    model = Model(parameters)
+    dataset_name = dataset_path.split('/')[-1].split('.')[0]
+    if dataset_name not in parameters:
+        print(f"Parâmetros não encontrados para o dataset {dataset_name}. Datasets aceitos são {list(parameters.keys())}.")
+        return
+
+    model = Model(parameters[dataset_name])
     
     print("Pesos iniciais:", model.get_dynamic_weights())
     
@@ -32,7 +44,7 @@ def test_with_dataset(dataset_path, num_branches=10000):
                 correct += 1
             total += 1
             
-            if total % 1000 == 0:
+            if total % 10000 == 0:
                 accuracy = (correct / total) * 100
                 print(f"Branches: {total}, Precisão: {accuracy:.2f}%, Pesos: {model.get_dynamic_weights()}")
     
