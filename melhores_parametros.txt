@@ -1,0 +1,41 @@
+MELHORES PARÂMETROS OTIMIZADOS PELO ALGORITMO GENÉTICO
+========================================================
+
+DATASET M1:
+-----------
+Melhor Aptidão: 88.11%
+Parâmetros:
+- pc_lut_addr_size: 18
+- lhr_lut_addr_size: 47
+- ghr_lut_addr_size: 32
+- ga_lut_addr_size: 52
+- xor_lut_addr_size: 30
+- weight_adjustment_rate: 53
+- min_weight: 569
+- max_weight: 1011
+- ghr_size: 22
+- ga_branches: 816
+
+Lista para test_with_dataset.py:
+M1: [18, 47, 32, 52, 30, 22, 816, 53, 569, 1011]
+
+DATASET M2:
+-----------
+Melhor Aptidão: 80.86%
+Parâmetros:
+- pc_lut_addr_size: 44
+- lhr_lut_addr_size: 43
+- ghr_lut_addr_size: 20
+- ga_lut_addr_size: 28
+- xor_lut_addr_size: 14
+- weight_adjustment_rate: 77
+- min_weight: 229
+- max_weight: 3568
+- ghr_size: 20
+- ga_branches: 602
+
+Lista para test_with_dataset.py:
+M2: [44, 43, 20, 28, 14, 20, 602, 77, 229, 3568]
+
+========================================================
+

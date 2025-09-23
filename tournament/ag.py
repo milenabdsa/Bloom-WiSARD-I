@@ -180,5 +180,5 @@ if __name__ == '__main__':
     parser.add_argument("input_file", type=str)
     args = parser.parse_args()
 
-    sample_input_file = f"/Users/almenara/Downloads/mestrado/data-fusion/Bloom-WiSARD-I/Dataset_pc_decimal/{args.input_file}.txt" 
+    sample_input_file = f"../Dataset_pc_decimal/{args.input_file}.txt" 
     best_params, final_best_fitness = genetic_algorithm(sample_input_file)

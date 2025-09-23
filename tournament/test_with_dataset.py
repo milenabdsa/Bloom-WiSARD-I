@@ -9,14 +9,14 @@ sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
 from model import Model
 
-def test_with_dataset(dataset_path, num_branches=10000):
+def test_with_dataset(dataset_path, num_branches=400000):
     print(f"=== Testando com dataset: {dataset_path} ===")
     
-    parameters = [1, 1, 1, 1, 1, 4, 4, 4, 4, 4, 8000, 8000, 8000, 8000, 8000, 5.0, 2.0, 2.0, 2.0, 3.0, 3, 3, 3, 3, 3, 4, 4]
-
     parameters = {
-        "M1": [22, 31, 58, 29, 63, 519, 32, 65, 696, 1169],
-        "M2": [ 26, 29, 16, 29, 20, 56, 231, 1, 1, 2000],
+        # M1 melhor aptidão 88.11%
+        "M1": [18, 47, 32, 52, 30, 22, 816, 53, 569, 1011],
+        # M2 melhor aptidão 80.86%
+        "M2": [44, 43, 20, 28, 14, 20, 602, 77, 229, 3568],
         "I1": [],
         "I2": [],
     }
